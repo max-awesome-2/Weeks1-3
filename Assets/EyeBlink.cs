@@ -3,35 +3,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// This class makes the face's eyes blink every however many seconds.
+/// This class makes the face's eyes close whenever the mouse is held down.
 /// </summary>
 public class EyeBlink : MonoBehaviour
 {
 
-    // number of seconds between blinks
-    public float blinkDelay = 5f;
+    public float blinkLerpSpeed = 0.05f;
 
-    // total time for one blink
-    public float blinkTime = 0.5f;
+    private Vector3 baseSize, blinkSize;
 
-    private float baseSize;
-
-    public AnimationCurve blinkCurve;
-
+    private void Start()
+    {
+        baseSize = transform.localScale;
+        blinkSize = baseSize;
+        blinkSize.y = 0.05f;
+    }
 
     // Update is called once per frame
     void Update()
     {
-        float blinkProgress = 1;
-        float timeMod = Time.time % blinkDelay;
 
-
-        if (timeMod > (blinkDelay - blinkTime))
+        // use lerp a little bit incorrectly here in order make an over-time effect without using time.time
+        if (Input.GetMouseButton(0))
         {
-            // calculate the progress through the blink curve
-            blinkProgress = 1 - (blinkDelay - timeMod) / blinkTime;
-
-            transform.localScale = new Vector3(transform.localScale.x, transform.localScale.x * blinkCurve.Evaluate(blinkProgress), transform.localScale.z);
+            transform.localScale = Vector3.Lerp(transform.localScale, blinkSize, blinkLerpSpeed);
+        } else
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, baseSize, blinkLerpSpeed);
         }
     }
 }
